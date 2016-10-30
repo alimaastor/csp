@@ -94,5 +94,43 @@ TEST(CspProblemTest, FindSolution)
     ASSERT_FALSE(problem.IsSolution(state1));
     auto state2 = CspProblem<std::size_t, std::size_t>::CspState({{0,{1}}, {1,{2}}});
     ASSERT_TRUE(problem.IsSolution(state2));
+    auto state3 = CspProblem<std::size_t, std::size_t>::CspState({{0,{1}}, {1,{}}});
+    ASSERT_FALSE(problem.IsSolution(state3));
+}
+
+TEST(CspProblemTest, GetFirstUnassignedVariable)
+{
+    CspProblem<std::size_t, std::size_t> problem;
+
+    auto state1 = CspProblem<std::size_t, std::size_t>::CspState({{0,{1,2}}, {1,{2}}});
+    ASSERT_EQ(problem.GetFirstUnassignedValueId(state1), 0);
+    auto state2 = CspProblem<std::size_t, std::size_t>::CspState({{0,{1}}, {1,{2}}});
+    ASSERT_THROW(problem.GetFirstUnassignedValueId(state2), std::runtime_error);
+    auto state3 = CspProblem<std::size_t, std::size_t>::CspState({{0,{}}, {1,{2}}});
+    ASSERT_THROW(problem.GetFirstUnassignedValueId(state3), std::runtime_error);
+}
+
+TEST(CspProblemTest, GetMinRemainingValuesUnassignedVariable)
+{
+    CspProblem<std::size_t, std::size_t> problem;
+
+    auto state1 = CspProblem<std::size_t, std::size_t>::CspState({{0,{1,2}}, {1,{2}}, {2,{2, 3, 4, 5}}});
+    ASSERT_EQ(problem.GetMinRemainingValuesId(state1), 0);
+    auto state2 = CspProblem<std::size_t, std::size_t>::CspState({{0,{}}, {1,{2}}, {2,{2, 3, 4}}});
+    ASSERT_EQ(problem.GetMinRemainingValuesId(state2), 2);
+    auto state3 = CspProblem<std::size_t, std::size_t>::CspState({{0,{}}, {1,{2}}});
+    ASSERT_THROW(problem.GetMinRemainingValuesId(state3), std::runtime_error);
+}
+
+TEST(CspProblemTest, GetMaxRemainingValuesUnassignedVariable)
+{
+    CspProblem<std::size_t, std::size_t> problem;
+
+    auto state1 = CspProblem<std::size_t, std::size_t>::CspState({{0,{1,2}}, {1,{2}}, {2,{2, 3, 4, 5}}});
+    ASSERT_EQ(problem.GetMaxRemainingValuesId(state1), 2);
+    auto state2 = CspProblem<std::size_t, std::size_t>::CspState({{0,{}}, {1,{2}}, {2,{2, 3, 4}}});
+    ASSERT_EQ(problem.GetMaxRemainingValuesId(state2), 2);
+    auto state3 = CspProblem<std::size_t, std::size_t>::CspState({{0,{}}, {1,{2}}});
+    ASSERT_THROW(problem.GetMaxRemainingValuesId(state3), std::runtime_error);
 }
 

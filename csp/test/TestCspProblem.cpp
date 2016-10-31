@@ -1,5 +1,5 @@
 
-#include "../NQueensCspProblem.h"
+#include "../CspProblem.h"
 
 #include <gtest/gtest.h>
 

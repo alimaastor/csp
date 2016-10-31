@@ -6,6 +6,7 @@
 #include <functional>
 #include <algorithm>
 #include <limits>
+#include <stdexcept>
 
 // A CspProblem represents a particular set of constrains that should not be
 // violated. It also detects if a solution has been found by checking the state.

@@ -23,6 +23,16 @@ public:
         m_problemPtr->RemoveValueFromVar(state, index, value);
     }
 
+    bool IsConsistent(const NQueensCspProblem::State& state)
+    {
+        return m_problemPtr->m_problem.IsConsistent(state);
+    }
+
+    bool IsSolution(const NQueensCspProblem::State& state)
+    {
+        return m_problemPtr->m_problem.IsSolution(state);
+    }
+
 private:
     std::shared_ptr<NQueensCspProblem> m_problemPtr;
 };
@@ -75,5 +85,131 @@ TEST(NQueensProblemTest, RemoveValue)
     ASSERT_EQ(state[3][1], 1);
     ASSERT_EQ(state[3][2], 2);
     ASSERT_EQ(state[3][3], 3);
+
+    ASSERT_THROW(tester.RemoveValueFromVar(state, 0, 2), std::runtime_error);
+}
+
+TEST(NQueensProblemTest, IsConsistent)
+{
+    auto problemPtr = std::make_shared<NQueensCspProblem>(4);
+    auto tester = NQueensCspProblemTester(problemPtr);
+
+    {
+        NQueensCspProblem::State state = {
+            {0, {1, 2}},
+            {1, {1, 2}},
+            {2, {1, 2}},
+            {3, {1, 2}}
+        };
+
+        ASSERT_TRUE(tester.IsConsistent(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {1}},
+            {2, {1, 2}},
+            {3, {1, 2}}
+        };
+
+        ASSERT_FALSE(tester.IsConsistent(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {2}},
+            {2, {1, 2}},
+            {3, {1, 2}}
+        };
+
+        ASSERT_FALSE(tester.IsConsistent(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {}},
+            {1, {2}},
+            {2, {1, 2}},
+            {3, {1, 2}}
+        };
+
+        ASSERT_FALSE(tester.IsConsistent(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {3}},
+            {2, {1, 2}},
+            {3, {1, 2}}
+        };
+
+        ASSERT_TRUE(tester.IsConsistent(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {3}},
+            {2, {1, 2}},
+            {3, {4}}
+        };
+
+        ASSERT_FALSE(tester.IsConsistent(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {3}},
+            {2, {0}},
+            {3, {2}}
+        };
+
+        ASSERT_TRUE(tester.IsConsistent(state));
+    }
+}
+
+TEST(NQueensProblemTest, IsSolution)
+{
+    auto problemPtr = std::make_shared<NQueensCspProblem>(4);
+    auto tester = NQueensCspProblemTester(problemPtr);
+
+    {
+        NQueensCspProblem::State state = {
+            {0, {1, 2}},
+            {1, {1, 2}},
+            {2, {1, 2}},
+            {3, {1, 2}}
+        };
+
+        ASSERT_FALSE(tester.IsSolution(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {1}},
+            {2, {1}},
+            {3, {1}}
+        };
+
+        ASSERT_FALSE(tester.IsSolution(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {3}},
+            {2, {0}},
+            {3, {1, 2}}
+        };
+
+        ASSERT_FALSE(tester.IsSolution(state));
+    }
+    {
+        NQueensCspProblem::State state = {
+            {0, {1}},
+            {1, {3}},
+            {2, {0}},
+            {3, {2}}
+        };
+
+        ASSERT_TRUE(tester.IsSolution(state));
+    }
 }
 

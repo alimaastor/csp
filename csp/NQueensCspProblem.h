@@ -26,12 +26,27 @@ public:
         });
         // 2) If two queens are threatening each other (only one position left for
         // each), the problem cannot be solved:
-        m_problem.AddConstrain([](const State& state){
-            for (auto pair : state)
+        m_problem.AddConstrain([this](const State& state){
+            for (std::size_t i = 0; i < m_boardSize; ++i)
             {
-                if (pair.second.size() == 0)
+                const auto& values1 = state.find(i)->second;
+                if (values1.size() != 1)
                 {
-                    return false;
+                    continue;
+                }
+                for (std::size_t j = i + 1; j < m_boardSize; ++j)
+                {
+                    const auto& values2 = state.find(j)->second;
+                    if (values2.size() != 1)
+                    {
+                        continue;
+                    }
+                    const auto value1 = values1[0];
+                    const auto value2 = values2[0];
+                    if ((value1 == value2) || (abs(value1 - value2) == abs(i - j)))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -59,10 +74,16 @@ private:
         return state;
     }
 
-    void RemoveValueFromVar(State& state, const std::size_t index, const std::size_t value)
+    void RemoveValueFromVar(State& state, const std::size_t index, const std::size_t value) const
     {
         std::vector<std::size_t>& values = state[index];
+        const auto sBefore = values.size();
         values.erase(std::remove(values.begin(), values.end(), value), values.end());
+        const auto sAfter = values.size();
+        if (sBefore == sAfter)
+        {
+            throw std::runtime_error("Could not find value to remove");
+        }
     }
 
     Problem     m_problem;

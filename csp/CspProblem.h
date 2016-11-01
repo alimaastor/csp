@@ -49,7 +49,7 @@ public:
                 return false;
             }
         }
-        return true;
+        return IsConsistent(state);
     }
 
     IdType GetFirstUnassignedValueId(const CspState& state) const

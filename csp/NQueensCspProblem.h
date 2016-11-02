@@ -53,10 +53,41 @@ public:
         });
     }
 
+    State GetSolution()
+    {
+        auto state = GetInitialState();
+        return RecursiveBacktracking(state);
+    }
+
 protected:
     std::size_t GetNextVarId(const State& state)
     {
         return m_problem.GetMinRemainingValuesId(state);
+    }
+
+    State RecursiveBacktracking(State& state)
+    {
+        if (m_problem.IsSolution(state))
+        {
+            return state;
+        }
+
+        auto varId = GetNextVarId(state);
+        for (const auto& value : state[varId])
+        {
+            auto newState = state;
+            newState[varId] = {value};
+            if (m_problem.IsConsistent(newState))
+            {
+                auto solution = RecursiveBacktracking(newState);
+                if (m_problem.IsSolution(solution))
+                {
+                    return solution;
+                }
+            }
+        }
+
+        return state;
     }
 
 private:
@@ -72,6 +103,20 @@ private:
             }
         }
         return state;
+    }
+
+    void SetValueToVar(State& state, const std::size_t index, const std::size_t value) const
+    {
+        std::vector<std::size_t>& values = state[index];
+        if (values.size() == 0)
+        {
+            throw std::runtime_error("No values left");
+        }
+        if (std::all_of(values.cbegin(), values.cend(), [value](const std::size_t v){ return v != value; }))
+        {
+            throw std::runtime_error("Value not in state");
+        }
+        state[index] = {value};
     }
 
     void RemoveValueFromVar(State& state, const std::size_t index, const std::size_t value) const

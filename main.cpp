@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-int main(int argc, char **argv)
+int main(int, char **argv)
 {
     std::istringstream ss(argv[1]);
     int x;

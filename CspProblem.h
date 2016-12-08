@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <deque>
 #include <functional>
 #include <algorithm>
 #include <limits>
@@ -15,6 +16,7 @@ class CspProblem {
 public:
     using CspState = std::unordered_map<IdType, std::vector<DataType>>;
     using CspConstrain = std::function<bool (const CspState&)>;
+    using CspArcQueue = std::deque<std::pair<IdType, IdType>>;
 
     friend class CspProblemUnitTest;
 

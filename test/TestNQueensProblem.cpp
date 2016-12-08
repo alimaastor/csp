@@ -18,6 +18,11 @@ public:
         return m_problemPtr->GetInitialState();
     }
 
+    NQueensCspProblem::ArcQueue GetAllArcs()
+    {
+        return m_problemPtr->GetAllArcs();
+    }
+
     void SetValueToVar(NQueensCspProblem::State& state, const std::size_t index, const std::size_t value)
     {
         m_problemPtr->SetValueToVar(state, index, value);
@@ -267,4 +272,35 @@ TEST(NQueensProblemTest, IsSolution)
         ASSERT_TRUE(tester.IsSolution(state));
     }
 }
+TEST(NQueensProblemTest, GetAllArcs)
+{
+    auto problemPtr = std::make_shared<NQueensCspProblem>(4);
+    auto tester = NQueensCspProblemTester(problemPtr);
+    auto queue = tester.GetAllArcs();
 
+    ASSERT_EQ(queue[ 0].first,  0);
+    ASSERT_EQ(queue[ 0].second, 1);
+    ASSERT_EQ(queue[ 1].first,  0);
+    ASSERT_EQ(queue[ 1].second, 2);
+    ASSERT_EQ(queue[ 2].first,  0);
+    ASSERT_EQ(queue[ 2].second, 3);
+    ASSERT_EQ(queue[ 3].first,  1);
+    ASSERT_EQ(queue[ 3].second, 0);
+    ASSERT_EQ(queue[ 4].first,  1);
+    ASSERT_EQ(queue[ 4].second, 2);
+    ASSERT_EQ(queue[ 5].first,  1);
+    ASSERT_EQ(queue[ 5].second, 3);
+    ASSERT_EQ(queue[ 6].first,  2);
+    ASSERT_EQ(queue[ 6].second, 0);
+    ASSERT_EQ(queue[ 7].first,  2);
+    ASSERT_EQ(queue[ 7].second, 1);
+    ASSERT_EQ(queue[ 8].first,  2);
+    ASSERT_EQ(queue[ 8].second, 3);
+    ASSERT_EQ(queue[ 9].first,  3);
+    ASSERT_EQ(queue[ 9].second, 0);
+    ASSERT_EQ(queue[10].first,  3);
+    ASSERT_EQ(queue[10].second, 1);
+    ASSERT_EQ(queue[11].first,  3);
+    ASSERT_EQ(queue[11].second, 2);
+    ASSERT_EQ(queue.size(), 12);
+}

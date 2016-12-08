@@ -6,6 +6,7 @@ class NQueensCspProblem
 public:
     using Problem = CspProblem<std::size_t, std::size_t>;
     using State = Problem::CspState;
+    using ArcQueue = Problem::CspArcQueue;
     friend class NQueensCspProblemTester;
 
     NQueensCspProblem(const std::size_t boardSize) :
@@ -65,6 +66,54 @@ protected:
         return m_problem.GetMinRemainingValuesId(state);
     }
 
+    State ArcConsistency(State& state)
+    {
+        ArcQueue queue = GetAllArcs();
+
+        while (queue.size() != 0)
+        {
+            auto arc = queue.pop_front();
+            auto xi = arc.first;
+            auto xj = arc.second;
+            if (RemoveInconsistentValues(state, xi, xj))
+            {
+                for (std::size_t i = 0; i < m_boardSize; ++i)
+                {
+                    if (xi != i)
+                    {
+                        queue.push_back(std::make_pair(i, arc.first));
+                    }
+                }
+            }
+        }
+        return state;
+    }
+
+    bool RemoveInconsistentValues(const State& state, std::size_t xi, std::size_t xj)
+    {
+        bool removed = false;
+        for (auto value1 : state[xi])
+        {
+            bool allowed = false;
+            for (auto value2 : state[xj])
+            {
+                testState = state;
+                testState[xi] = value1;
+                testState[xj] = value2;
+                if (IsConsistent(testState))
+                {
+                    allowed = true;
+                    break;
+                }
+            }
+            if (!allowed)
+            {
+
+            }
+        }
+        return removed;
+    }
+
     State RecursiveBacktracking(State& state)
     {
         if (m_problem.IsSolution(state))
@@ -103,6 +152,22 @@ private:
             }
         }
         return state;
+    }
+
+    ArcQueue GetAllArcs()
+    {
+        ArcQueue queue;
+        for (std::size_t i = 0; i < m_boardSize; ++i)
+        {
+            for (std::size_t j = 0; j < m_boardSize; ++j)
+            {
+                if (i != j)
+                {
+                    queue.push_back(std::make_pair(i, j));
+                }
+            }
+        }
+        return queue;
     }
 
     void SetValueToVar(State& state, const std::size_t index, const std::size_t value) const
